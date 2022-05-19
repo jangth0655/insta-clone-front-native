@@ -1,10 +1,13 @@
-import { StatusBar } from "expo-status-bar";
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, View } from "react-native";
+import LoggedOutNav from "./navigator/LoggedOutNav";
+import { NavigationContainer } from "@react-navigation/native";
+import { View, Appearance } from "react-native";
+import { ThemeProvider } from "styled-components";
+import { theme } from "./theme";
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -19,7 +22,6 @@ export default function App() {
         const imagePromises = imageToLoad.map((image) =>
           Asset.loadAsync(image)
         );
-        console.log(imagePromises);
         return Promise.all([...imagePromises, ...fontPromises]);
       } catch (e) {
         console.warn(e);
@@ -39,19 +41,13 @@ export default function App() {
   if (!appIsReady) {
     return null;
   }
+
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <Text>Hello!!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ThemeProvider theme={theme}>
+      <NavigationContainer>
+        <LoggedOutNav />
+        <View onLayout={onLayoutRootView} />
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
