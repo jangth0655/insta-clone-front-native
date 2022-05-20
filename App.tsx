@@ -1,16 +1,21 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import { Ionicons } from "@expo/vector-icons";
 import LoggedOutNav from "./navigator/LoggedOutNav";
 import { NavigationContainer } from "@react-navigation/native";
-import { View, Appearance } from "react-native";
+import { View } from "react-native";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./theme";
+import { ApolloProvider, useReactiveVar } from "@apollo/client";
+import client, { isLoggedInVar, TOKEN, tokenVar } from "./apollo";
+import LoggedInNav from "./navigator/LoggedInNav";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   useEffect(() => {
     async function prepare() {
@@ -22,6 +27,11 @@ export default function App() {
         const imagePromises = imageToLoad.map((image) =>
           Asset.loadAsync(image)
         );
+        const token = await AsyncStorage.getItem(TOKEN);
+        if (token) {
+          isLoggedInVar(true);
+          tokenVar(token);
+        }
         return Promise.all([...imagePromises, ...fontPromises]);
       } catch (e) {
         console.warn(e);
@@ -43,11 +53,13 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <NavigationContainer>
-        <LoggedOutNav />
-        <View onLayout={onLayoutRootView} />
-      </NavigationContainer>
-    </ThemeProvider>
+    <ApolloProvider client={client}>
+      <ThemeProvider theme={theme}>
+        <NavigationContainer>
+          {isLoggedIn ? <LoggedInNav /> : <LoggedOutNav />}
+          <View onLayout={onLayoutRootView} />
+        </NavigationContainer>
+      </ThemeProvider>
+    </ApolloProvider>
   );
 }

@@ -11,7 +11,7 @@ const LoginLink = styled.Text`
   margin-top: 20px;
 `;
 
-const Welcome: React.FC<NativeStackScreenProps<any, "Enter">> = ({
+const Welcome: React.FC<NativeStackScreenProps<any, "Welcome">> = ({
   navigation,
 }) => {
   const goToCreateAccount = () => navigation.navigate("CreateAccount");
@@ -22,6 +22,7 @@ const Welcome: React.FC<NativeStackScreenProps<any, "Enter">> = ({
         text="Create New Account"
         disabled={false}
         onPress={goToCreateAccount}
+        loading={false}
       />
       <TouchableOpacity onPress={goToLogIn}>
         <LoginLink>Log in</LoginLink>
