@@ -11,6 +11,7 @@ import Notification from "../screens/Notifications";
 import Photo from "../screens/Photo";
 import Profile from "../screens/Profile";
 import Search from "../screens/Search";
+import { ScreenRootStackParamList } from "../shared.type";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,19 +21,6 @@ interface ShareStackNavProps {
   screenName: ScreenName;
   [key: string]: any;
 }
-
-type RootStackParamList = {
-  Detail:
-    | typeof Feed
-    | typeof Me
-    | typeof Notification
-    | typeof Search
-    | typeof Profile
-    | typeof Photo
-    | typeof Comments;
-};
-
-type DetailScreenProps = NativeStackScreenProps<RootStackParamList, "Detail">;
 
 const ShareStackNav = ({ screenName }: ShareStackNavProps) => {
   return (

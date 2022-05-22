@@ -13,6 +13,7 @@ import client, { isLoggedInVar, TOKEN, tokenVar, cache } from "./apollo";
 import LoggedInNav from "./navigator/LoggedInNav";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AsyncStorageWrapper, persistCache } from "apollo3-cache-persist";
+import Persistor from "apollo3-cache-persist/Persistor";
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -31,6 +32,7 @@ export default function App() {
           cache,
           storage: new AsyncStorageWrapper(AsyncStorage),
         });
+
         const fontsToLoad = [Ionicons.font];
         const fontPromises = fontsToLoad.map((font) => Font.loadAsync(font));
         const imageToLoad = [require("./assets/favicon.png")];

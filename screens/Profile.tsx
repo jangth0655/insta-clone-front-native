@@ -1,6 +1,19 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useEffect } from "react";
 import { Text, View } from "react-native";
+import { ScreenRootStackParamList } from "../shared.type";
 
-const Profile = () => {
+const Profile = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<ScreenRootStackParamList, "Profile">) => {
+  useEffect(() => {
+    if (route?.params?.username) {
+      navigation.setOptions({
+        title: route?.params?.username,
+      });
+    }
+  }, []);
   return (
     <View style={{ backgroundColor: "black", flex: 1 }}>
       <Text style={{ color: "white" }}>Someones Profile</Text>

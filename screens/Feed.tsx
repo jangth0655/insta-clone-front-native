@@ -15,6 +15,7 @@ import PhotoItem from "../components/PhotoItem";
 import ScreenLayout from "../components/ScreenLayout";
 import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from "../fragment";
 import { SeeFeedItem, SeeFeedItems } from "../interface";
+import { ScreenRootStackParamList } from "../shared.type";
 
 const FEED_QUERY = gql`
   ${PHOTO_FRAGMENT}
@@ -23,6 +24,7 @@ const FEED_QUERY = gql`
     seeFeed(offset: $offset) {
       ...PhotoFragment
       user {
+        id
         username
         avatar
       }
@@ -36,7 +38,9 @@ const FEED_QUERY = gql`
   }
 `;
 
-const Feed = ({ navigation }: NativeStackScreenProps<any, "Feed">) => {
+const Feed = ({
+  navigation,
+}: NativeStackScreenProps<ScreenRootStackParamList, "Feed">) => {
   const { data, loading, refetch, fetchMore } = useQuery<SeeFeedItems>(
     FEED_QUERY,
     {

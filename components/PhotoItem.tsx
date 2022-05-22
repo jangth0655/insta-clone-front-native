@@ -129,6 +129,13 @@ const PhotoItem = ({ id, user, caption, file, isLiked, likes }: PhotoProps) => {
       update: updateToggleLike,
     }
   );
+
+  const goToProfile = () => {
+    navigation.navigate("Profile", {
+      username: user?.username,
+      id: user?.id,
+    });
+  };
   useEffect(() => {
     Image.getSize(file, (width, height) => {
       setImageHeight(height / 3);
@@ -136,7 +143,7 @@ const PhotoItem = ({ id, user, caption, file, isLiked, likes }: PhotoProps) => {
   }, [file]);
   return (
     <Container>
-      <Header onPress={() => navigation.navigate("Profile")}>
+      <Header onPress={() => goToProfile()}>
         <UserAvatar resizeMode="cover" source={{ uri: user?.avatar }} />
         <Username>{user?.username}</Username>
       </Header>
@@ -161,12 +168,16 @@ const PhotoItem = ({ id, user, caption, file, isLiked, likes }: PhotoProps) => {
           <Ionicons name="chatbubble-outline" color="white" size={22} />
         </Action>
       </Actions>
-      <TouchableOpacity onPress={() => navigation.navigate("Likes")}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("Likes", id ? { photoId: +id } : undefined)
+        }
+      >
         <Likes>{likes === 1 ? "1 like" : `${likes} likes`}</Likes>
       </TouchableOpacity>
       <ExtraContainer>
         <Caption>
-          <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+          <TouchableOpacity onPress={() => goToProfile()}>
             <Username>{user?.username}</Username>
           </TouchableOpacity>
           <CaptionText>{caption}</CaptionText>

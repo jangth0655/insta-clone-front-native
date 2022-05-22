@@ -25,19 +25,21 @@ export interface IComment {
   user: IUser;
 }
 
+export interface IPhoto {
+  id: number;
+  user: IUser;
+  file: any;
+  caption: string;
+  likes: number;
+  comments: IComment[];
+  commentNumber: number;
+  createdAt: number;
+  isMine: boolean;
+  isLiked: boolean;
+}
+
 export interface SeeFeedItems {
-  seeFeed: {
-    id: number;
-    user: IUser;
-    file: any;
-    caption: string;
-    likes: number;
-    comments: IComment[];
-    commentNumber: number;
-    createdAt: number;
-    isMine: boolean;
-    isLiked: boolean;
-  }[];
+  seeFeed: IPhoto[];
 }
 
 export interface SeeFeedItem {
