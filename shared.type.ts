@@ -39,4 +39,5 @@ export type ScreenRootStackParamList = {
       }
     | undefined;
   Comments: undefined;
+  Upload: undefined;
 };
