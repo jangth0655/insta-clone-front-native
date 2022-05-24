@@ -6,6 +6,9 @@ import { Ionicons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { StatusBar } from "expo-status-bar";
 import * as MediaLibrary from "expo-media-library";
+import { useIsFocused } from "@react-navigation/native";
+import { ScreenRootStackParamList } from "../shared.type";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 const Container = styled.View`
   flex: 1;
@@ -55,7 +58,9 @@ const PhotoActionText = styled.Text`
   font-weight: 600;
 `;
 
-const TakePhoto = ({ navigation }: any) => {
+const TakePhoto = ({
+  navigation,
+}: NativeStackScreenProps<ScreenRootStackParamList, "TakePhoto">) => {
   const camera = useRef(new Camera({}));
   const [takenPhoto, setTakenPhoto] = useState<any>("");
   const [cameraReady, setCameraReady] = useState(false);
@@ -94,8 +99,11 @@ const TakePhoto = ({ navigation }: any) => {
   };
   const goToUpload = async (save: any) => {
     if (save) {
-      const asset = await MediaLibrary.saveToLibraryAsync(takenPhoto);
+      await MediaLibrary.saveToLibraryAsync(takenPhoto);
     }
+    navigation.navigate("UploadForm", {
+      file: takenPhoto,
+    });
   };
   const onUpload = () => {
     Alert.alert("Save Photo", "Save Photo & upload or just upload", [
@@ -122,9 +130,10 @@ const TakePhoto = ({ navigation }: any) => {
   };
 
   const onDismiss = () => setTakenPhoto("");
+  const isFocused = useIsFocused();
   return (
     <Container>
-      <StatusBar hidden={true} />
+      {isFocused ? <StatusBar hidden={true} /> : null}
       {takenPhoto === "" ? (
         <Camera
           ref={camera}

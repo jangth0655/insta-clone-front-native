@@ -20,10 +20,21 @@ export type RootStackParamList = {
     | undefined;
   Likes: { photoId: number } | undefined;
   Comments: undefined;
+  TakePhoto: undefined;
+  UploadForm:
+    | {
+        file: string;
+      }
+    | undefined;
+  Tabs: undefined;
 };
 
 export type ScreenRootStackParamList = {
-  Feed: undefined;
+  Feed:
+    | {
+        file: any;
+      }
+    | undefined;
   Me: undefined;
   Notification: undefined;
   Search: undefined;
@@ -40,4 +51,11 @@ export type ScreenRootStackParamList = {
     | undefined;
   Comments: undefined;
   Upload: undefined;
+  TakePhoto: undefined;
+  UploadForm:
+    | {
+        file: string;
+      }
+    | undefined;
+  Tabs: undefined;
 };

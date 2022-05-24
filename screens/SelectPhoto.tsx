@@ -4,6 +4,7 @@ import * as MediaLibrary from "expo-media-library";
 import {
   FlatList,
   Image,
+  StatusBar,
   TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
@@ -41,7 +42,7 @@ const HeaderRightText = styled.Text`
 const SelectPhoto = ({ navigation }: any) => {
   const [ok, setOk] = useState(false);
   const [photos, setPhotos] = useState<MediaLibrary.Asset[]>();
-  const [chosenPhoto, setChosenPhoto] = useState("");
+  const [chosenPhoto, setChosenPhoto] = useState<any>("");
   const getPhotos = async () => {
     const { assets: photos } = await MediaLibrary.getAssetsAsync();
     setPhotos(photos);
@@ -87,8 +88,15 @@ const SelectPhoto = ({ navigation }: any) => {
   useEffect(() => {
     getPermissions();
   }, []);
+
   const HeaderRight = () => (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("UploadForm", {
+          file: chosenPhoto,
+        })
+      }
+    >
       <HeaderRightText>Next</HeaderRightText>
     </TouchableOpacity>
   );
@@ -96,10 +104,11 @@ const SelectPhoto = ({ navigation }: any) => {
     navigation.setOptions({
       headerRight: HeaderRight,
     });
-  }, []);
+  }, [chosenPhoto]);
 
   return (
     <Container>
+      <StatusBar hidden={false} />
       <Top>
         {chosenPhoto !== "" ? (
           <Image
