@@ -39,7 +39,7 @@ export const logUserOut = async () => {
 };
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:4000/graphql",
+  uri: "https://slow-berries-decide-211-214-177-17.loca.lt/graphql",
 });
 
 export const cache = new InMemoryCache({
