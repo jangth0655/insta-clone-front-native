@@ -48,3 +48,15 @@ export const FEED_PHOTO = gql`
     isMine
   }
 `;
+
+export const ROOM_FRAGMENT = gql`
+  fragment RoomFragment on Room {
+    id
+    unreadTotal
+    users {
+      id
+      username
+      avatar
+    }
+  }
+`;

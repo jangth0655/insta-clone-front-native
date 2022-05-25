@@ -27,6 +27,7 @@ export type RootStackParamList = {
       }
     | undefined;
   Tabs: undefined;
+  Room: {} | undefined;
 };
 
 export type ScreenRootStackParamList = {
@@ -58,4 +59,15 @@ export type ScreenRootStackParamList = {
       }
     | undefined;
   Tabs: undefined;
+  Messages: {} | undefined;
+  Rooms:
+    | {
+        [key: string]: any;
+      }
+    | undefined;
+  Room:
+    | {
+        [key: string]: any;
+      }
+    | undefined;
 };

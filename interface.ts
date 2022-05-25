@@ -54,3 +54,18 @@ export interface SeeFeedItem {
   isMine: boolean;
   isLiked: boolean;
 }
+
+export interface IMessage {
+  id: number;
+  payload: string;
+  users: IUser;
+  room: IRoom;
+  read: boolean;
+}
+
+export interface IRoom {
+  id: number;
+  users: IUser[];
+  unreadTotal: number;
+  messages: IMessage[];
+}
