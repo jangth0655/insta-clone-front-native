@@ -71,9 +71,14 @@ const uploadHttpLink = createUploadLink({
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost:4000/subscriptions",
+    url: "ws://localhost:4000/graphql",
+    connectionParams: () => ({
+      token: tokenVar(),
+    }),
   })
 );
+
+const httpLinks = authLink.concat(onErrorLink).concat(uploadHttpLink);
 
 const splitLink = split(
   ({ query }) => {
@@ -84,7 +89,7 @@ const splitLink = split(
     );
   },
   wsLink,
-  uploadHttpLink
+  httpLinks
 );
 
 export const client = new ApolloClient({

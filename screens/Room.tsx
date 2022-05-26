@@ -1,4 +1,11 @@
-import { ApolloCache, gql, useMutation, useQuery } from "@apollo/client";
+import {
+  ApolloCache,
+  gql,
+  useApolloClient,
+  useMutation,
+  useQuery,
+  useSubscription,
+} from "@apollo/client";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -14,6 +21,17 @@ import useMe from "../hooks/useMe";
 import { IMessage, IRoom } from "../interface";
 import { ScreenRootStackParamList } from "../shared.type";
 import { Ionicons } from "@expo/vector-icons";
+import { MESSAGE_FRAGMENT } from "../fragment";
+import { UpdateQueryFn } from "@apollo/client/core/watchQueryOptions";
+
+const ROOM_UPDATE = gql`
+  subscription roomUpdates($id: Int) {
+    roomUpdates(id: $id) {
+      ...MessageFragment
+    }
+  }
+  ${MESSAGE_FRAGMENT}
+`;
 
 const SEND_MESSAGE_MUTATION = gql`
   mutation sendMessage($payload: String!, $roomId: Int, $userId: Int) {
@@ -31,7 +49,7 @@ const ROOM_QUERY = gql`
       messages {
         id
         payload
-        user {
+        users {
           username
           avatar
         }
@@ -99,10 +117,15 @@ interface RoomForm {
   message: string;
 }
 
+interface RoomUpdate {
+  roomUpdate: IMessage;
+}
+
 const Room = ({
   navigation,
   route,
 }: NativeStackScreenProps<ScreenRootStackParamList, "Room">) => {
+  useSubscription(ROOM_UPDATE);
   const { data: meData } = useMe();
   const { register, handleSubmit, setValue, getValues, reset, watch } =
     useForm<RoomForm>();
@@ -117,7 +140,7 @@ const Room = ({
       const messageObj = {
         id,
         payload: message,
-        user: {
+        users: {
           username: meData?.me.username,
           avatar: meData?.me.avatar,
         },
@@ -154,12 +177,62 @@ const Room = ({
     useMutation<MutationResponse>(SEND_MESSAGE_MUTATION, {
       update,
     });
-  const { data, loading } = useQuery<RoomQuery>(ROOM_QUERY, {
+  const { data, loading, subscribeToMore } = useQuery<RoomQuery>(ROOM_QUERY, {
     variables: {
       id: route?.params && route?.params.id,
     },
   });
   console.log(data);
+
+  const client = useApolloClient();
+  const updateQuery: UpdateQueryFn = (prevQuery, option: any) => {
+    const {
+      subscriptionData: {
+        data: { roomUpdates: message },
+      },
+    } = option;
+    if (message.id) {
+      const messageFragment = client.cache.writeFragment({
+        fragment: gql`
+          fragment NewMessage on Message {
+            id
+            payload
+            users {
+              username
+              avatar
+            }
+            read
+          }
+        `,
+        data: message,
+      });
+      client.cache.modify({
+        id: `Room:${route.params && route.params.id}`,
+        fields: {
+          messages: (prev: any[]) => {
+            const existingMessage = prev.find(
+              (aMessage) => aMessage.__ref === messageFragment?.__ref
+            );
+            if (existingMessage) {
+              return prev;
+            }
+            return [...prev, messageFragment];
+          },
+        },
+      });
+    }
+  };
+  useEffect(() => {
+    if (data?.seeRoom) {
+      subscribeToMore({
+        document: ROOM_UPDATE,
+        variables: {
+          id: route.params && route.params.id,
+        },
+        updateQuery: updateQuery,
+      });
+    }
+  }, [data]);
   const onValid = ({ message }: RoomForm) => {
     if (sendMessageLoading) return;
     sendMessageMutation({

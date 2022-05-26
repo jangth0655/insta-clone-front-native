@@ -43,7 +43,6 @@ const LogIn: React.FC<NativeStackScreenProps<any, "LogIn">> = ({ route }) => {
   };
 
   const onCompleted = async (data: any) => {
-    console.log(data);
     const { ok, token } = data.login;
     if (ok) {
       await logUserIn(token);
